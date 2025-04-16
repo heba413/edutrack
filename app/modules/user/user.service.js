@@ -30,6 +30,10 @@ const signUp = async (userData) => {
 
   await newUser.save();
   const token = await generateToken(newUser._id)
+  newUser.token=token;
+  await newUser.save(
+
+  )
   return { token, email: newUser.email, name: newUser.name,phone:newUser.phone }; 
 };
 
@@ -49,6 +53,10 @@ const login = async (email, password) => {
   }
 
   const token = generateToken(user._id);
+  user.token=token;
+  await user.save(
+    
+  )
 
   return { token,phone:user.phone,email: user.email, name: user.name  };
 };
@@ -111,6 +119,38 @@ const changePassword = async (email, newPassword) => {
 
   return { message: "Password updated successfully" };
 };
+//currentuser
+const getProfile = async (userId) => {
+  const user = await User.findById(userId).select("-password");
+  if (!user) {
+    throw new Error("User not found");
+  }
+  return user;
+};
+
+const updateProfile = async (userId, userData) => {
+  const user = await User.findByIdAndUpdate(userId, userData, {
+    new: true,
+    runValidators: true,
+  }).select("-password");
+
+  if (!user) {
+    throw new Error("User not found or update failed");
+  }
+  return user;
+};
+const logout = async (userId) => {
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  user.token = null; // Or "" if your schema prefers that
+  await user.save();
+
+  return { message: `${user.name} logged out successfully` };
+};
 
 module.exports = {
   signUp,
@@ -118,4 +158,7 @@ module.exports = {
   forgotPassword,
   checkCode,
   changePassword,
+  getProfile,
+  updateProfile,
+  logout,
 };

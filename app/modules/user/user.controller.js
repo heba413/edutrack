@@ -48,11 +48,39 @@ const changePassword = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+const getProfile = async (req, res) => {
+  try {
+    const user = await authService.getProfile(req.user._id);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 
+const updateProfile = async (req, res) => {
+  try {
+    const updatedUser = await authService.updateProfile(req.user._id, req.body);
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+const logout = async (req, res) => {
+  try {
+    const result = await authService.logout(req.user.id); // or req.user._id if you only need the ID
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 module.exports = {
   signUp,
   login,
   forgotPassword,
   checkCode,
   changePassword,
+  getProfile,
+  updateProfile,
+  logout,
+
 };

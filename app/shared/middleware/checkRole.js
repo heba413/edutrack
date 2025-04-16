@@ -31,4 +31,5 @@ const checkRole = (rolesAllowed) => {
     };
 };
 
+
 module.exports = checkRole;
