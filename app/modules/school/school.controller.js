@@ -14,6 +14,7 @@ const filterSchools = async (req, res) => {
       filters["feesRange.min"] = { $gte: Number(minFee) || 0 };
       filters["feesRange.max"] = { $lte: Number(maxFee) || Infinity };
     }
+    console.log(filters);
 
     const schools = await School.find(filters);
     res.status(200).json(schools);
