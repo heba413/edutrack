@@ -14,6 +14,10 @@ router.post("/check-code", authController.checkCode);
 
 router.post("/change-password", authController.changePassword);
 
+router.post("/resend-code", authController.resendCode);
+
+router.post("/change-password-with-current", protect, authController.changePasswordWithCurrent);
+
 //profile route
 router.get("/getProfile", protect, authController.getProfile);
 
@@ -21,4 +25,5 @@ router.put("/updateProfile", protect, authController.updateProfile);
 
 router.post("/logout", protect, authController.logout);
 
+router.delete("/delete-profile", protect, authController.deleteProfile);
 module.exports = router; 

@@ -119,6 +119,61 @@ const changePassword = async (email, newPassword) => {
 
   return { message: "Password updated successfully" };
 };
+
+//Resend verification code
+const resendVerificationCode = async (email) => {
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  // Generate new code (or reuse existing if recent)
+  const verificationCode = crypto.randomInt(1000, 9999).toString();
+
+  // Update code and reset verification status
+  user.verificationCode = verificationCode;
+  user.isVerified = false;
+  await user.save();
+
+  // Send email
+  await sendMail(
+    user.email,
+    `Your new verification code is: ${verificationCode}`,
+    "New Verification Code"
+  );
+
+  return { 
+    message: "New verification code sent",
+    email: user.email
+  };
+};
+
+//Change Password with Current Password Verification
+const changePasswordWithCurrent = async (userId, currentPassword, newPassword) => {
+  const user = await User.findById(userId);
+  
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  // Verify current password
+  const isMatch = await bcrypt.compare(currentPassword, user.password);
+  if (!isMatch) {
+    throw new Error("Current password is incorrect");
+  }
+
+  // Hash new password
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  user.password = hashedPassword;
+  await user.save();
+
+  return { 
+    success: true,
+    message: "Password changed successfully" 
+  };
+};
+
 //currentuser
 const getProfile = async (userId) => {
   const user = await User.findById(userId).select("-password");
@@ -152,13 +207,30 @@ const logout = async (userId) => {
   return { message: `${user.name} logged out successfully` };
 };
 
+// delete user profile
+const deleteProfile = async (userId) => {
+  const deletedUser = await User.findByIdAndDelete(userId);
+
+  if (!deletedUser) {
+    throw new Error("User not found");
+  }
+
+  return { 
+    message: "Account deleted successfully",
+    email: deletedUser.email 
+  };
+};
+
 module.exports = {
   signUp,
   login,
   forgotPassword,
   checkCode,
   changePassword,
+  resendVerificationCode,
+  changePasswordWithCurrent,
   getProfile,
   updateProfile,
   logout,
+  deleteProfile,
 };

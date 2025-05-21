@@ -106,6 +106,15 @@ const listSchools = async (req, res) => {
       res.status(400).json({ message: error.message });
     }
   };
+
+  const s_deleteProfile = async (req, res) => {
+    try {
+      const result = await schoolService.s_deleteProfile(req.user._id);
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  };
   
   const searchSchools = async (req, res) => {
     try {
@@ -127,5 +136,6 @@ module.exports = {
   s_getProfile,
   s_updateProfile,
   s_logout,
+  s_deleteProfile,
   searchSchools,
  };

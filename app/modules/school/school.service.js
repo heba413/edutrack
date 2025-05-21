@@ -124,6 +124,21 @@ const s_logout = async (schoolId) => {
   return { message: `${school.name} logged out successfully` };
 };
 
+const s_deleteProfile = async (schoolId) => {
+  const deletedSchool = await School.findByIdAndDelete(schoolId);
+
+  if (!deletedSchool) {
+    throw new Error("School not found");
+  }
+
+  return { 
+    message: "School account deleted successfully",
+    name: deletedSchool.name,
+    email: deletedSchool.email
+  };
+};
+
+
 const searchSchools = async (query) => {
   const regex = new RegExp(query, "i");
   const schools = await School.find({ name: regex }).select("-password -token");
@@ -139,5 +154,6 @@ module.exports = {
   s_getProfile,
   s_updateProfile,
   s_logout,
+  s_deleteProfile,
   searchSchools,
 };

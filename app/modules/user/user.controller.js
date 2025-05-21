@@ -48,6 +48,35 @@ const changePassword = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+// Resend code
+const resendCode = async (req, res) => {
+  try {
+    const result = await authService.resendVerificationCode(req.body.email);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Change password with current
+const changePasswordWithCurrent = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const result = await authService.changePasswordWithCurrent(
+      req.user._id,
+      currentPassword,
+      newPassword
+    );
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ 
+      success: false,
+      message: error.message 
+    });
+  }
+};
+
 const getProfile = async (req, res) => {
   try {
     const user = await authService.getProfile(req.user._id);
@@ -73,14 +102,26 @@ const logout = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+const deleteProfile = async (req, res) => {
+  try {
+    const result = await authService.deleteProfile(req.user._id);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 module.exports = {
   signUp,
   login,
   forgotPassword,
   checkCode,
   changePassword,
+  resendCode,
+  changePasswordWithCurrent,
   getProfile,
   updateProfile,
   logout,
-
+  deleteProfile,
 };

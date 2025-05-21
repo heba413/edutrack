@@ -4,6 +4,9 @@ const rateLimit = require("express-rate-limit");
 
 const AuthRoutes = require("./modules/user/user.route");
 const SchoolRoutes = require("./modules/school/school.route");
+const NotificationRoutes = require("./modules/notification/notification.route");
+const communityChatRoutes = require('./modules/community-chat/community-chat.route');
+const feedbackRoutes = require('./modules/feedback/feedback.route');
 const app = express();
 
 // Middleware
@@ -24,6 +27,10 @@ app.use(limiter);
 // Routes
 app.use("/api", AuthRoutes);
 app.use("/api/schools", SchoolRoutes);
+app.use("/api/notifications", NotificationRoutes);
+app.use('/api/community-chat', communityChatRoutes);
+app.use('/api/feedback', feedbackRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("Hello, Express with MongoDB!");
